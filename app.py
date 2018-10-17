@@ -21,28 +21,44 @@ def home():
 #        return render_template('login.html')
 
 
+# TODO: separate POST requests to allow entry of params after logging in
 @app.route('/', methods=['POST'])
 def login():
+    print('login')
     user = str(request.form['username'])
     password = str(request.form['password'])
     cur.execute('SELECT * FROM users WHERE name = \'{}\' AND password = \'{}\';'.format(user, password))
     response = cur.fetchone()
     if response != None:
         print(response, 'OK')
-        return render_template('entry.html', methods = ['Metals', 'Organics'])
+        return redirect(url_for('enter_test_point'))
     else:
         print(response, 'not OK')
         flash('Invalid login or password')
         return render_template('login.html')
 
-@app.route('/entry')
+@app.route('/entryx')
 def enter_log():
     # conn = sqlite3.connect
     methods = ['Metals', 'Organics']
     return render_template('entry.html', methods = methods)
 
+#@app.route('/entry', methods=['POST', 'GET'])
+#def render_entry():
+#    print('only here')
+#    return render_template('make_entry.html')
+
+@app.route('/entry', methods=['POST', 'GET'])
+def enter_test_point():
+    if request.method == 'POST':
+        print(request.form['pH'])
+        for item, val in request.form.items():
+            print(item, val)
+    return render_template('make_entry.html')
+
+
 if __name__ == "__main__":
     app.secret_key = 'bottom text'
     db = sqlite3.connect('db/test.db', check_same_thread=False)
     cur = db.cursor()
-    app.run(debug=True)
+    app.run(debug=True, host = '0.0.0.0')
