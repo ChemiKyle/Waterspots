@@ -1,0 +1,36 @@
+body {
+	background: #fff7e6;
+	color: #333333
+}
+
+.login {
+	margin: auto;
+	width: 15%;
+	border: 2px solid #001a33;
+	padding: 10px;
+	border-radius: 6px;
+	background: #b3d9ff;
+	box-shadow: 2px 5px 10px #888888;
+	text-align: center;
+}
+
+input[type=text], input[type=password] {
+	padding: 1% 2%;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid  #0052cc;
+	background-color: #fff7e6;
+	border-radius: 5px;
+}
+
+.login button {
+	background-color: #ff8533;
+	width: 40%;
+	color: white;
+	border: 1px solid black;
+	border-radius: 3px;
+}
+
+.login button:active {
+	opacity: 0.8;
+}

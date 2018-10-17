@@ -12,11 +12,24 @@ def init_db():
 
     c.execute(user_sql)
 
-    test_sql = """CREATE TABLE IF NOT EXISTS test_methods (
+    methods_sql = """CREATE TABLE IF NOT EXISTS test_methods (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text NOT NULL,
-    params text NOT NULL)"""
+    params text NOT NULL
+    );"""
 
-    c.execute(test_sql)
+    c.execute(methods_sql)
+
+    observations_sql = """CREATE TABLE IF NOT EXISTS observations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    study TEXT NOT NULL,
+    pH FLOAT,
+    TDS FLOAT,
+    Temperature FLOAT,
+    Turbidity FLOAT,
+    timestamp DATETIME
+    );"""
+
+    c.execute(observations_sql)
 
 init_db()

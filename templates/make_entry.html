@@ -2,13 +2,16 @@
 
 <!doctype html>
 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
 <body>
     <form type="submit" method="post">
         <!-- TODO: jinja2 this -->
-        pH: <input name="pH" type="text"/> <br/>
-        Temp: <input name="Temp" type="text"/> C <br/>
-        TDS: <input name="TDS" type="text"/> ppm <br/>
-        Turb: <input name="Turb" type="text" value=""/> NTU
+        {% for parameter in parameters %}
+          <label for="{{parameter}}">{{ parameter }}</label> 
+          <input name="{{ parameter }}" type="text"/> <br/>
+        {% endfor %}
+        <!-- end jinja2 -->
 
         <input type="Submit" value="entry"/>
     </form>

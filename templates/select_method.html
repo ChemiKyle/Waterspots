@@ -1,0 +1,12 @@
+<!-- Kyle Chesney, 2018 -->
+
+<!doctype html>
+<title>Select Test Type</title>
+
+<body>
+    <select name="test_methods" method="GET" action="/">
+        {% for method in methods %}
+        <option value="{{method}}">{{ method }}</option>
+        {% endfor %}
+    </select>
+</body>

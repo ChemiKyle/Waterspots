@@ -37,7 +37,7 @@ def login():
         flash('Invalid login or password')
         return render_template('login.html')
 
-@app.route('/entryx')
+@app.route('/entry_type')
 def enter_log():
     # conn = sqlite3.connect
     methods = ['Metals', 'Organics']
@@ -51,10 +51,18 @@ def enter_log():
 @app.route('/entry', methods=['POST', 'GET'])
 def enter_test_point():
     if request.method == 'POST':
-        print(request.form['pH'])
+        dict = {}
+        dict['study'] = 'test'
+        dict['timestamp'] = dt.now()
+        print(request.form)
         for item, val in request.form.items():
-            print(item, val)
-    return render_template('make_entry.html')
+            dict[item] =  val
+        print(dict)
+        sql = """INSERT INTO observations (study, pH, TDS, Turbidity, Temperature, timestamp)
+        VALUES(?,?,?,?,?,?)"""
+        cur.execute(sql, tuple(dict[k] for k in dict.keys()))
+        db.commit()
+    return render_template('make_entry.html', parameters = ['pH', 'TDS', 'Turbidity', 'Temperature'])
 
 
 if __name__ == "__main__":

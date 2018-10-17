@@ -2,18 +2,17 @@
 
 <!doctype html>
 <title>Login</title>
-<link rel="stylesheet type=text/css href="{{ url_for('static', filename="style.css") }}">
+<link rel="stylesheet" type="text/css" href="../static/style.css">
 
 <body>
   <div class="login">
       <h1>Login</h1>
-      <br/>
       <form type="submit" method="post">
-          Username: <input name="username" type="text"/></input>
+		  <input name="username" type="text" placeholder="Username"/></input>
           <br/>
-          Password: <input name="password" type="password"/></input>
+          <input name="password" type="password" placeholder="Password"/></input>
           <br/>
-          <input type="Submit" value="Login"/>
+          <button type="submit" value="login"/>Sign in</button>
       </form>
   </div>
 
