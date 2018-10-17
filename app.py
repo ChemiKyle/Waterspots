@@ -21,13 +21,12 @@ def home():
 #        return render_template('login.html')
 
 
-# TODO: separate POST requests to allow entry of params after logging in
 @app.route('/', methods=['POST'])
 def login():
     print('login')
     user = str(request.form['username'])
     password = str(request.form['password'])
-    cur.execute('SELECT * FROM users WHERE name = \'{}\' AND password = \'{}\';'.format(user, password))
+    cur.execute("SELECT * FROM users WHERE name = ? AND password = ?;", [user, password])
     response = cur.fetchone()
     if response != None:
         print(response, 'OK')
