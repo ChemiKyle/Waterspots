@@ -3,10 +3,16 @@
 <!doctype html>
 <title>Select Test Type</title>
 
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
 <body>
-    <select name="test_methods" method="GET" action="/">
+    <h1>Select test type to load parameters</h1>
+    <form type="submit" method="post">
+    <select name="test_method">
         {% for method in methods %}
-        <option value="{{method}}">{{ method }}</option>
+        <option name ="{{ method }}" value="{{method}}">{{ method }}</option>
         {% endfor %}
     </select>
+    <button type="submit" value="Submit"/>
+    </form>
 </body>
