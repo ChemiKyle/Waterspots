@@ -13,6 +13,7 @@ app = Flask(__name__)
 login = LoginManager(app)
 #db = SQLAlchemy()
 
+# TODO: create a home page
 @app.route('/')
 def home():
 #    if current_user.is_authenticated:
@@ -56,22 +57,21 @@ def entry_type():
 def enter_test_point():
     meth = session['method']
     print(meth)
-    sql = """SELECT name, param, units FROM test_methods WHERE name = ?"""
-    print(cur.execute(sql, str(meth)))
+    sql = """SELECT param, units FROM test_methods WHERE name = ?"""
+    parameters = (cur.execute(sql, [meth])).fetchall() # parameters load from a db
     if request.method == 'POST':
         dict = {}
-        dict['study'] = 'test'
         dict['timestamp'] = dt.now()
         for item, val in request.form.items():
             dict[item] =  val
         print(dict)
         # TODO: pick parameters based on test method
-        sql = """INSERT INTO observations (study, pH, TDS, Turbidity, Temperature, timestamp, notes)
-        VALUES(?,?,?,?,?,?,?)"""
-        cur.execute(sql, tuple(dict[k] for k in dict.keys()))
+        columns = ", ".join(dict.keys())
+        placeholders = ":"+", :".join(dict.keys())
+        sql = """INSERT INTO observations ({})
+        VALUES({})""".format(columns, placeholders)
+        cur.execute(sql, dict)
         db.commit()
-    # TODO: parameters load from a db for every test method
-    parameters = ['study', 'pH', 'TDS', 'Turbidity', 'Temperature', 'notes']
     return render_template('make_entry.html', parameters = parameters)
 
 

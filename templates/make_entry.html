@@ -6,12 +6,16 @@
 
 <body>
     <form type="submit" method="post">
-        <!-- TODO: jinja2 this -->
+        <label for="study">Study</label>
+        <input name="study" type="text"/><br/>
+
         {% for parameter in parameters %}
-          <label for="{{parameter}}">{{ parameter }}</label> 
-          <input name="{{ parameter }}" type="text"/> <br/>
+          <label for="{{parameter.0}}">{{ parameter.0 }}</label> 
+          <input name="{{ parameter.0 }}" type="text"/> {{parameter.1}} <br/>
         {% endfor %}
-        <!-- end jinja2 -->
+
+          <label for="notes">Notes</label>
+          <input name="notes" type="text"/><br/>
 
         <input type="Submit" value="entry"/>
     </form>

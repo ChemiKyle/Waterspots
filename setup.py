@@ -29,6 +29,8 @@ def init_db():
     Temperature FLOAT,
     Turbidity FLOAT,
     TOC FLOAT,
+    Hardness FLOAT,
+    Alkalinity Float,
     timestamp DATETIME,
     notes TEXT
     );"""
@@ -41,7 +43,6 @@ init_db()
 def populate_methods():
     conn = sqlite3.connect('db/test.db')
     c = conn.cursor()
-    sqlite3.conn
 
     sql = """INSERT INTO test_methods (
     name, param, units)
@@ -57,11 +58,13 @@ def populate_methods():
     dict['Metals'] = {'pH': '',
                       'TDS': 'ppm',
                       'Temperature':'C',
-                      'Turbidity': 'NTU'}
+                      'Turbidity': 'NTU',
+                      'Hardness': 'ppm',
+                      'Alkalinity': 'ppm'}
     for test in dict:
         print(dict[test])
         for param in dict[test]:
             c.execute(sql, [test, param, dict[test][param]])
     conn.commit()
 
-# populate_methods()
+populate_methods()
