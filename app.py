@@ -14,10 +14,13 @@ login = LoginManager(app)
 #db = SQLAlchemy()
 
 # TODO: create a home page
-@app.route('/')
+@app.route('/home', methods=['POST'])
 def home():
 #    if current_user.is_authenticated:
-    return render_template('login.html')
+    if request.method == 'POST':
+        dest = str(request.form['destination'])
+        return redirect(url_for('entry_type'))
+    return render_template('homepage.html')
 #    if not session.get('logged_in'):
 #        return render_template('login.html')
 
@@ -32,7 +35,7 @@ def login():
         response = cur.fetchone()
         if response != None:
             print(response, 'OK')
-            return redirect(url_for('entry_type'))
+            return redirect(url_for('home'))
         else:
             print(response, 'not OK')
             flash('Invalid login or password')
