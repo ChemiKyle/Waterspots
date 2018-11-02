@@ -11,7 +11,7 @@
 
         {% for parameter in parameters %}
           <label for="{{parameter.0}}">{{ parameter.0 }}</label> 
-          <input name="{{ parameter.0 }}" type="text"/> {{parameter.1}} <br/>
+          <input name="{{ parameter.0 }}" type="number"step="any"/> {{parameter.1}} <br/>
         {% endfor %}
 
           <label for="notes">Notes</label>

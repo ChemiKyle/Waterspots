@@ -14,13 +14,25 @@ body {
 	text-align: center;
 }
 
-input[type=text], input[type=password] {
+label {
+    display: inline-block;
+    width: 10%;
+    text-align: left;
+}
+
+
+input[type=text], input[type=password], input[type=number] {
 	padding: 1% 2%;
 	margin: 8px 0;
 	display: inline-block;
 	border: 1px solid  #0052cc;
 	background-color: #fff7e6;
 	border-radius: 5px;
+}
+
+input:focus {
+    color: white;
+    background-color: #5f6d89;
 }
 
 .login button {
