@@ -1,0 +1,24 @@
+<!-- Kyle Chesney, 2018 -->
+
+<!doctype html>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='chem_calcs.js') }}"></script>
+
+<body>
+    <h1>C1V1</h1>
+        <label for="c1">C1</label>
+        <input name="c1" type="number" placeholder="C1" /> ppb
+        <label for="v1">V1</label>
+        <input name="v1" type="number" placeholder="V1" /> L
+        <br/>
+        <label for="c2">C2</label>
+        <input name="c2" type="number" placeholder="C2" /> ppb
+        <label for="v2">V2</label>
+        <input name="v2" type="number" placeholder="V2" /> L
+        <button onclick="c1v1()">Calculate</button>
+
+    <div id="result">
+        
+    </div>
+</body>

@@ -14,16 +14,19 @@ login = LoginManager(app)
 #db = SQLAlchemy()
 
 # TODO: create a home page
-@app.route('/home', methods=['POST'])
+@app.route('/home', methods=['POST', 'GET'])
 def home():
 #    if current_user.is_authenticated:
     if request.method == 'POST':
         dest = str(request.form['destination'])
-        return redirect(url_for('entry_type'))
+        return redirect(url_for(dest))
     return render_template('homepage.html')
 #    if not session.get('logged_in'):
 #        return render_template('login.html')
 
+@app.route('/calculations')
+def calculations():
+    return render_template('chem_calcs.html')
 
 @app.route('/', methods=['POST', 'GET'])
 def login():
