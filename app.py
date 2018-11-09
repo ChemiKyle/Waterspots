@@ -44,6 +44,32 @@ def login():
             flash('Invalid login or password')
     return render_template('login.html')
 
+@app.route('/enter_new_study', methods=['POST','GET'])
+def enter_new_study():
+    standards_sql = """SELECT DISTINCT standard FROM standard_water_parameters;"""
+    standards = cur.execute(standards_sql).fetchall()
+
+    # TODO: AJAX
+    tests_sql = """SELECT DISTINCT test FROM standard_water_parameters;"""
+    tests = cur.execute(tests_sql).fetchall()
+    
+    analytes_sql = """SELECT DISTINCT analyte from standard_analytes;"""
+    analytes = cur.execute(analytes_sql).fetchall()
+
+    if request.method == 'POST':
+        entry = {}
+        for key, val in request.form.items():
+            entry[key] = val
+        columns = ", ".join(entry.keys())
+        placeholders = ":"+", :".join(entry.keys())
+        sql = """INSERT INTO studies ({})
+        VALUES({})""".format(columns, placeholders)
+        cur.execute(sql, entry)
+        db.commit()
+    return render_template('enter_new_study.html',
+                           standards = standards,
+                           tests = tests,
+                           analytes = analytes)
 
 
 # Getting here should be GET so users can bookmark data entry

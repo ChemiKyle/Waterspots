@@ -1,0 +1,31 @@
+<!-- Kyle Chesney, 2018 -->
+
+<!doctype html>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+
+<body>
+    <h1>New Study Entry</h1>
+
+    <form type="submit" method="post">
+        <select name="standard">
+            {% for standard in standards %}
+            <option value="{{standard.0}}">{{ standard.0 }}</option>
+            {% endfor %}
+        </select>
+        <!-- TODO: AJAX call based on standard selection to get unique tests -->
+        <select name="test">
+            {% for test in tests %}
+            <option value="{{test.0}}">{{ test.0 }}</option>
+            {% endfor %}
+        </select>
+        <!-- TODO: AJAX call based on test to get unique analytes -->
+        <select name="analyte">
+            {% for analyte in analytes %}
+            <option value="{{analyte.0}}">{{ analyte.0 }}</option>
+            {% endfor %}
+        </select>
+        <input name="study_name" type="text" placeholder="Study name" />
+        <button type="submit">Submit</button>
+    </form>
+</body>
