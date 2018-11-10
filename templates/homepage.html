@@ -10,7 +10,12 @@
     <div>
         <form method="post">
             <button type="submit" name="destination" value="enter_new_study">Enter New Study</button>
-            <button type="submit" name="destination" value="make_entry">Make an entry</button>
+            <button type="submit" name="destination" value="observation_entry">Make an entry for</button>
+            <select name="study">
+                {% for study in studies %}
+                <option value="{{study.0}}">{{study.0}}</option>
+                {% endfor %}
+            </select>
             <button type="submit" name="destination" value="calculations">Calculations</button>
         </form>
     </div>

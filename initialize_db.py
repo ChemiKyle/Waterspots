@@ -36,11 +36,13 @@ def init_db():
     );"""
     
     c.execute(observations_sql)
-    
+
+    # TODO: restrict analytes to standard method?
     studies_sql = """CREATE TABLE IF NOT EXISTS studies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     standard TEXT NOT NULL,
     test TEXT NOT NULL,
+    analyte TEXT NOT NULL,
     study_name TEXT NOT NULL
     );"""
     

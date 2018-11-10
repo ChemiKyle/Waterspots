@@ -8,6 +8,9 @@
     <h1>New Study Entry</h1>
 
     <form type="submit" method="post">
+        <!-- TODO: allow user input for typing in addition to dropdown -->
+        <!-- https://stackoverflow.com/questions/5650457/html-select-form-with-option-to-enter-custom-value -->
+        <!-- HTML5 or javascript? -->
         <select name="standard">
             {% for standard in standards %}
             <option value="{{standard.0}}">{{ standard.0 }}</option>

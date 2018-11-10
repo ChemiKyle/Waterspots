@@ -17,10 +17,12 @@ login = LoginManager(app)
 @app.route('/home', methods=['POST', 'GET'])
 def home():
 #    if current_user.is_authenticated:
+    studies_sql = """SELECT study_name FROM studies;"""
+    studies = cur.execute(studies_sql).fetchall()
     if request.method == 'POST':
         dest = str(request.form['destination'])
         return redirect(url_for(dest))
-    return render_template('homepage.html')
+    return render_template('homepage.html', studies = studies)
 #    if not session.get('logged_in'):
 #        return render_template('login.html')
 
@@ -85,10 +87,9 @@ def entry_type():
     return render_template('select_method.html', methods = methods)
 
 
-@app.route('/entry', methods=['POST', 'GET'])
-def enter_test_point():
-    meth = session['method']
-    print(meth)
+@app.route('/observation_entry', methods=['POST', 'GET'])
+def observation_entry():
+    # TODO: get study from home page
     sql = """SELECT param, units FROM test_methods WHERE name = ?"""
     parameters = (cur.execute(sql, [meth])).fetchall() # parameters load from a db
     if request.method == 'POST':
