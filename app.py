@@ -21,6 +21,7 @@ def home():
     studies = cur.execute(studies_sql).fetchall()
     if request.method == 'POST':
         dest = str(request.form['destination'])
+        session['study'] = str(request.form['study'])
         return redirect(url_for(dest))
     return render_template('homepage.html', studies = studies)
 #    if not session.get('logged_in'):
@@ -89,9 +90,12 @@ def entry_type():
 
 @app.route('/observation_entry', methods=['POST', 'GET'])
 def observation_entry():
-    # TODO: get study from home page
-    sql = """SELECT param, units FROM test_methods WHERE name = ?"""
-    parameters = (cur.execute(sql, [meth])).fetchall() # parameters load from a db
+    # TODO: change this to AJAX call on this page instead of needing homepage
+    test_sql = """SELECT test FROM studies WHERE study_name = ?"""
+    test = cur.execute(test_sql, [session['study']]).fetchone()[0]
+
+    sql = """SELECT param, units FROM standard_water_parameters WHERE test = ?"""
+    parameters = (cur.execute(sql, [test])).fetchall() # parameters load from a db
     if request.method == 'POST':
         dict = {}
         dict['timestamp'] = dt.now()
