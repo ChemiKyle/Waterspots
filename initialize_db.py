@@ -3,24 +3,25 @@ import sqlite3
 def init_db():
     conn = sqlite3.connect('db/test.db')
     c = conn.cursor()
-    
+
     user_sql = """CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text NOT NULL,
     password text NOT NULL
     );"""
-    
+
     c.execute(user_sql)
-    
+
     methods_sql = """CREATE TABLE IF NOT EXISTS test_methods (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text NOT NULL,
     param text NOT NULL,
     units text
     );"""
-    
+
     c.execute(methods_sql)
-    
+
+    # TODO: populate with all options in standard_methods?
     observations_sql = """CREATE TABLE IF NOT EXISTS observations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     study_name TEXT NOT NULL,
@@ -30,11 +31,13 @@ def init_db():
     Turbidity FLOAT,
     TOC FLOAT,
     Hardness FLOAT,
-    Alkalinity Float,
+    Alkalinity FLOAT,
+    polyphosphate FLOAT,
+    total_free_chlorine FLOAT,
     timestamp DATETIME,
     notes TEXT
     );"""
-    
+
     c.execute(observations_sql)
 
     # TODO: restrict analytes to standard method?
@@ -45,7 +48,7 @@ def init_db():
     analyte TEXT NOT NULL,
     study_name TEXT NOT NULL
     );"""
-    
+
     c.execute(studies_sql)
 
 

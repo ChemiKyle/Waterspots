@@ -13,7 +13,6 @@ app = Flask(__name__)
 login = LoginManager(app)
 #db = SQLAlchemy()
 
-# TODO: create a home page
 @app.route('/home', methods=['POST', 'GET'])
 def home():
 #    if current_user.is_authenticated:
@@ -22,6 +21,7 @@ def home():
     if request.method == 'POST':
         dest = str(request.form['destination'])
         session['study'] = str(request.form['study'])
+        print(session['study'])
         return redirect(url_for(dest))
     return render_template('homepage.html', studies = studies)
 #    if not session.get('logged_in'):
@@ -55,7 +55,7 @@ def enter_new_study():
     # TODO: AJAX
     tests_sql = """SELECT DISTINCT test FROM standard_water_parameters;"""
     tests = cur.execute(tests_sql).fetchall()
-    
+
     analytes_sql = """SELECT DISTINCT analyte from standard_analytes;"""
     analytes = cur.execute(analytes_sql).fetchall()
 

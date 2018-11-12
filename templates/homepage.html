@@ -12,6 +12,7 @@
             <button type="submit" name="destination" value="enter_new_study">Enter New Study</button>
             <button type="submit" name="destination" value="observation_entry">Make an entry for</button>
             <select name="study">
+                <option value="none">None</option>
                 {% for study in studies %}
                 <option value="{{study.0}}">{{study.0}}</option>
                 {% endfor %}
