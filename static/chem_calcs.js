@@ -25,11 +25,11 @@ function gallonsLiters() {
 
     if (gals == "" && liters == "") {printResult("Please fill in a value for conversion");}
     else if (liters == "") {
-        gals = liters * 3.785;
-        printResult(`${liters} L * 3.785 gal/L = ${gals} gal`);
-    } else if (gals == "") {
-        liters = gals / 3.785;
+        liters = gals * 3.785;
         printResult(`${gals} / 3.785 gal/L = ${liters} L`);
+    } else if (gals == "") {
+        gals = liters / 3.785;
+        printResult(`${liters} L * 3.785 gal/L = ${gals} gal`);
     }
     else {printResult("Please fill in a value for conversion");}
 
@@ -41,12 +41,25 @@ function printResult(result) {
 
 function adjustMetricPrefix(num, unit) {
     // incomplete function to adjust metric prefix for nicer numbers
-    function powerAdjust(num) {
-        var reduced = 0;
-        if (num == 0) {break;}
+    var powAdjust = 0;
+    function powerAdjust(num, powAdjust) {
+        if (num == 0) {return 0;}
+
         if (num / 1000 > 1) {
-            reduced++;
+            num /= 1000;
+            powAdjust++;
+            powerAdjust(num, powAdjust);
         }
+        else if (num * 1000 < 1) {
+            num *= 1000;
+            powAdjust--;
+            powerAdjust(num, powAdjust);
+        }
+        return powAdjust;
+    }
+    num *= 10**powAdjust;
+    if (unit == "L") {
+        // TODO: dictionary with key: power of 10; val: modifier
     }
 
 }
