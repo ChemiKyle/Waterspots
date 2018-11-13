@@ -94,20 +94,21 @@ def observation_entry():
     test_sql = """SELECT test FROM studies WHERE study_name = ?"""
     test = cur.execute(test_sql, [session['study']]).fetchone()[0]
 
-    sql = """SELECT param, units FROM standard_water_parameters WHERE test = ?"""
+    sql = """SELECT param, units, lower_bound, upper_bound FROM standard_water_parameters WHERE test = ?"""
     parameters = (cur.execute(sql, [test])).fetchall() # parameters load from a db
     if request.method == 'POST':
-        dict = {}
-        dict['timestamp'] = dt.now()
+        obs_dict = {}
+        obs_dict['study_name'] = session['study']
+        obs_dict['timestamp'] = dt.now()
         for item, val in request.form.items():
-            dict[item] =  val
-        print(dict)
+            obs_dict[item] =  val
+        print(obs_dict)
         # TODO: pick parameters based on test method
-        columns = ", ".join(dict.keys())
-        placeholders = ":"+", :".join(dict.keys())
+        columns = ", ".join(obs_dict.keys())
+        placeholders = ":"+", :".join(obs_dict.keys())
         sql = """INSERT INTO observations ({})
         VALUES({})""".format(columns, placeholders)
-        cur.execute(sql, dict)
+        cur.execute(sql, obs_dict)
         db.commit()
     return render_template('make_entry.html', parameters = parameters)
 
