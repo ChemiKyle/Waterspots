@@ -35,6 +35,27 @@ function gallonsLiters() {
 
 }
 
+function turbidityCalc() {
+    var volume = document.getElementsByName("turb_volume")[0].value;
+    var volume_units = document.getElementsByName("volume_units")[0].value;
+    var dust_type = document.getElementsByName("dust_type")[0].value;
+    var end_turbidity = document.getElementsByName("end_turbidity")[0].value;
+    var turb_constant;
+
+    if (volume_units == "Liters") {
+        volume /= 3.785;
+    }
+    // TODO: change to dictionary
+    if (dust_type == "fine") {
+        turb_constant = 0.06 / 11;
+    } else if (dust_type == "coarse") {
+        turb_constant = 130 / 8500;
+    }
+
+    var grams_needed = volume * turb_constant * end_turbidity;
+    printResult(`Grams needed: ${grams_needed}`);
+}
+
 function printResult(result) {
     document.getElementById("result").innerHTML = result;
 }

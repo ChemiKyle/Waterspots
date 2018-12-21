@@ -32,6 +32,25 @@
 
     <button onclick="gallonsLiters()">Calculate</button>
 
+    <h1>Turbidity calculation</h1>
+    <label for="turb_volume">Volume</label>
+    <input name="turb_volume" type="number" /> 
+    <select name="volume_units">
+        <option value="Liters">L</option>
+        <option value="Gallons">Gal</option>
+    </select>
+
+    <label for="dust_type">Dust Type</label>
+    <select name="dust_type">
+        <option value="fine">Fine</option>
+        <option value="coarse">Coarse</option>
+    </select>
+
+    <label for="end_turbidity">Desired turbidity</label>
+    <input name="end_turbidity" type="number"/>
+
+    <button onclick="turbidityCalc()">Calculate</button>
+
     <div id="result">
         <br/>
     </div>
