@@ -8,10 +8,13 @@ from flask_login import LoginManager
 # TODO: MariaDB vs PostgreSQL, re: audit trail
 import sqlite3
 from datetime import datetime as dt
+from sampling_schedule import *
 
 app = Flask(__name__)
 login = LoginManager(app)
 #db = SQLAlchemy()
+
+app.register_blueprint(calculations_page)
 
 @app.route('/home', methods=['POST', 'GET'])
 def home():
@@ -110,7 +113,7 @@ def observation_entry():
         VALUES({})""".format(columns, placeholders)
         cur.execute(sql, obs_dict)
         db.commit()
-    return render_template('make_entry.html', parameters = parameters)
+    return render_template('make_entry.html', study_name = session['study'], parameters = parameters)
 
 
 if __name__ == "__main__":

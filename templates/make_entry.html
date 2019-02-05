@@ -8,6 +8,8 @@
     <form type="submit" method="post">
         <!-- TODO: update for method entry -->
         <!-- link to new study at end of list? -->
+        <label for='study_name'>Project:</label>
+        <br/> <h3>{{ study_name }}</h3>
 
         {% for parameter in parameters %}
           <label for="{{parameter.0}}">{{ parameter.0 }}</label> 

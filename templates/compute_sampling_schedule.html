@@ -1,0 +1,22 @@
+
+<!-- Kyle Chesney, 2018 -->
+
+<!doctype html>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+<body>
+    <h1>Sampling Schedule Creation</h1>
+
+    <label for="system_type">System Type</label>
+    <select name="system_type">
+        <option value="plumbed">Plumbed</option>
+        <option value="pour">Pour</option>
+    </select>
+
+    <label for="capacity">Capacity</label>
+    <input name="capacity" type="number" placeholder="Capacity" />
+
+    <label for="flow_rate">Flow Rate</label>
+    <input name="flow_rate" type="number" />
+</body>
