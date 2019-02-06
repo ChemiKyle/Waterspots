@@ -15,7 +15,7 @@ body {
 }
 
 label {
-    display: inline-block;
+    display: block;
     width: 10%;
     text-align: left;
 }

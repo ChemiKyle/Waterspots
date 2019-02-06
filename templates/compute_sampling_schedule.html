@@ -4,19 +4,47 @@
 <!doctype html>
 
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='sampling_schedule.js') }}"></script>
+<script>
+ var df = {{ json_df | safe }};
+</script>
 
 <body>
     <h1>Sampling Schedule Creation</h1>
+    <form type="submit" method="post">
 
-    <label for="system_type">System Type</label>
-    <select name="system_type">
-        <option value="plumbed">Plumbed</option>
-        <option value="pour">Pour</option>
-    </select>
+        <label for="system_type">System Type</label>
+        <select name="system_type">
+            <option value="plumbed">Plumbed</option>
+            <option value="pour">Pour</option>
+        </select>
 
-    <label for="capacity">Capacity</label>
-    <input name="capacity" type="number" placeholder="Capacity" />
+        <label for="capacity">Capacity</label>
+        <input name="capacity" type="number" placeholder="Capacity" />
 
-    <label for="flow_rate">Flow Rate</label>
-    <input name="flow_rate" type="number" />
+        <label for="flow_rate">Flow Rate</label>
+        <input name="flow_rate" type="number" step="any" />
+
+        <!-- TODO: link to project, lead with valid pcts -->
+        <label for="sample_pcts">Sampling Percentages</label>
+        <select name="sample_pcts">
+            <option value="1">10s-PID</option>
+        </select>
+
+        <input type="Submit" value="calculate"/>
+
+        <br/>
+
+        <div id="sampling_table">
+            {{ sampling_table | safe }}
+        </div>
+
+        <br/>
+
+        <div id="chart">
+
+        </div>
+
+    </form>
 </body>
