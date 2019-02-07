@@ -26,13 +26,11 @@ def compute_sampling_schedule():
         print(comp_dict)
 
         if comp_dict['system_type'] == 'plumbed':
-            # javascript to add in cycle info
             start_time = ' '.join([comp_dict['start_date'], comp_dict['start_time']])
 
             df = gen_dataframe(on_mins=int(comp_dict['on_mins']), off_mins=int(comp_dict['off_mins']), flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=comp_dict['sample_pcts'], start_time = start_time)
 
         elif comp_dict['system_type'] == 'pour':
-            # javascript to add in batch size
             df = gen_pour_df(batch_size=comp_dict['batch_size'], flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=[0, 25, 50, 75, 100, 150, 180, 200])
 
         json_df = df.to_json(orient='records')
