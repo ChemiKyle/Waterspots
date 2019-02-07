@@ -34,7 +34,7 @@ def compute_sampling_schedule():
             df = gen_pour_df(2, flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=[0, 25, 50, 75, 100, 150, 180, 200])
             print('pour')
 
-        json_df = df.to_json()
+        json_df = df.to_json(orient='records')
 
         sampling_table = df[df.sampling_point][['vol_passed', 'pct_capacity', 'test_day', 'hours_into_day', 'dt']]
         # Formatting for table
