@@ -13,12 +13,6 @@ function draw_lineplot() {
     var xAxis = d3.axisBottom(x);
     var yAxis = d3.axisLeft(y);
 
-    var plot_df = [df.cum_mins_running, df.vol_passed];
-    // var plot_df = [[0, 10, 20, 30, 500, 1000], [1500, 1400, 1200, 1000, 800, 500]];
-
-    // var valueline = d3.line()
-        // .x(function(d) { return x(d3.values(d[0])); })
-        // .y(function(d) { return y(d3.values(d[1])); });
     var valueline = d3.line()
         .x(function(d) { return x(d.cum_mins_running); })
         .y(function(d) { return y(d.vol_passed); });
@@ -29,9 +23,6 @@ function draw_lineplot() {
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-    // x.domain(d3.extent(df, function(df) {return df.cum_mins_running; }));
-    // y.domain([0, d3.max(df, function(df) {return df.vol_passed; })]);
 
     svg.append("g")
         .attr("class", "axis")

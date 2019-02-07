@@ -27,12 +27,13 @@ def compute_sampling_schedule():
 
         if comp_dict['system_type'] == 'plumbed':
             # javascript to add in cycle info
-            df = gen_dataframe(on_mins=6, off_mins=24, flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=comp_dict['sample_pcts'], start_time = "01/01/19 11:00")
-            print(df.head())
-        if comp_dict['system_type'] == 'pour':
+            start_time = ' '.join([comp_dict['start_date'], comp_dict['start_time']])
+
+            df = gen_dataframe(on_mins=int(comp_dict['on_mins']), off_mins=int(comp_dict['off_mins']), flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=comp_dict['sample_pcts'], start_time = start_time)
+
+        elif comp_dict['system_type'] == 'pour':
             # javascript to add in batch size
-            df = gen_pour_df(2, flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=[0, 25, 50, 75, 100, 150, 180, 200])
-            print('pour')
+            df = gen_pour_df(batch_size=comp_dict['batch_size'], flow_rate=comp_dict['flow_rate'], capacity=comp_dict['capacity'], sample_pcts=[0, 25, 50, 75, 100, 150, 180, 200])
 
         json_df = df.to_json(orient='records')
 
@@ -43,7 +44,9 @@ def compute_sampling_schedule():
         sampling_table.dt = sampling_table.dt.dt.round('1min').astype('<M8[m]')
         sampling_table.hours_into_day = pd.to_datetime(sampling_table.hours_into_day, unit='h').dt.round('1min').astype('M8[m]').dt.time
         sampling_table.columns = ['Total Volume', '% Capacity', 'Test Day', 'Time Into Day (H:M)', 'Expected Date']
+
         return render_template('compute_sampling_schedule.html', sampling_table = sampling_table.to_html(index = 0), json_df = json_df)
+
     return render_template('compute_sampling_schedule.html')
 
 
@@ -54,9 +57,9 @@ def gen_increase_array(on_mins, off_mins, flow_rate):
     """
     cycle_time = on_mins + off_mins
     increase_array = []
-    for i in range(1, on_mins+1):
+    for i in range(on_mins):
         increase_array.append((1, flow_rate))
-    for i in range(1 + on_mins, cycle_time + 1):
+    for i in range(on_mins, cycle_time):
         increase_array.append((1, 0))
     return(increase_array)
 
@@ -76,7 +79,7 @@ def gen_collection_points(capacity):
 
 
 def gen_dataframe(on_mins, off_mins, flow_rate, capacity, sample_pcts,
-                  start_time = '11:00'):
+                  start_time):
     increase_array = gen_increase_array(on_mins, off_mins, flow_rate)
     collection_points = gen_collection_points(capacity)
     max_volume = collection_points[-1]
@@ -91,8 +94,7 @@ def gen_dataframe(on_mins, off_mins, flow_rate, capacity, sample_pcts,
     df['hours_into_day'] = (df.cum_mins_running / 60) % 16
     df.loc[df.hours_into_day == 0, 'hours_into_day'] = 16.0
 
-    #TODO: take start time and calculate real time
-    start_time = pd.to_datetime(start_time, format = '%m/%d/%y %H:%M')
+    start_time = pd.to_datetime(start_time, format = '%Y-%m-%d %H:%M')
     df['dt'] = start_time + pd.to_timedelta(df.hours_into_day, unit = 'h') + pd.to_timedelta(df.test_day - 1, unit = 'd')
     #TODO: do aove with datetime
     # Collection column, boolean with idxmax and loc

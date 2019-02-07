@@ -1,36 +1,54 @@
 
-<!-- Kyle Chesney, 2018 -->
+<!-- Kyle Chesney, 2019 -->
 
 <!doctype html>
 
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-<script src="{{ url_for('static', filename='d3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='sampling_schedule.js') }}"></script>
-<script>
- var df = {{ json_df | safe }};
-</script>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='sampling_schedule.js') }}"></script>
+    <script> var df = {{ json_df | safe }}; </script>
+</head>
 
 <body>
     <h1>Sampling Schedule Creation</h1>
     <form type="submit" method="post">
 
         <label for="system_type">System Type</label>
-        <select name="system_type">
+        <select name="system_type"
+        onchange="show(this.options[this.selectedIndex].value)">
             <option value="plumbed">Plumbed</option>
             <option value="pour">Pour</option>
         </select>
 
         <label for="capacity">Capacity</label>
-        <input name="capacity" type="number" placeholder="Capacity" />
+        <input name="capacity" type="number" placeholder="100% Capacity" />
 
         <label for="flow_rate">Flow Rate</label>
         <input name="flow_rate" type="number" step="any" />
 
+        <label for="start_date">Start Date</label>
+        <input name="start_date" type="date" />
+
         <!-- TODO: link to project, lead with valid pcts -->
         <label for="sample_pcts">Sampling Percentages</label>
         <select name="sample_pcts">
-            <option value="1">10s-PID</option>
+            <option value="1">0, 10, 20, ... , 120</option>
         </select>
+
+        <div class="hidden" id="plumbed" style="display:none">
+            <label for="start_time">Start Time</label>
+            <input name="start_time" type="time" value="11:00" />
+
+            <label for="">Cycling</label>
+            <input name="on_mins" type="number" step="any" placeholder="Minutes On" />
+            <input name="off_mins" type="number" step="any" placeholder="Minutes Off" />
+        </div>
+
+        <div class="hidden" id="pour" style="">
+            <label for="batch_size">Batch Size</label>
+            <input name="batch_size" type="number" step="any" />
+        </div>
 
         <input type="Submit" value="calculate"/>
     </form>
@@ -48,3 +66,11 @@
     </div>
 
 </body>
+
+<script>
+ function show(system_type) {
+     var hiddens = document.getElementsByClassName("hidden");
+     for (var i = 0; i < hiddens.length; i++) { hiddens[i].style.display='none'; }
+     document.getElementById(system_type).style.display='block';
+ }
+</script>
