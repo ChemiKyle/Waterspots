@@ -50,44 +50,85 @@ function draw_lineplot() {
 function radial_clockplot() {
     var [margin, width, height, svg] = setup_chart_area();
 
+    svg = svg
+        .attr("transform", `translate(${ width / 2 }, ${ height / 2 })`);
+
+    var radius = Math.min(width, height) / 2 - Math.max.apply(null, Object.values(margin));
+    console.log(radius);
+
     // TODO: split this by calendar day of df.dt
     var testDay1 = df.slice(0, 960); // TODO: extract time and date separately
+    var calDay1 = df.slice(0, 783); // First calendar day if starting at 11am
 
     var r = d3.scaleLinear()
         .domain(d3.extent(testDay1, function(d) { return (d.vol_passed); }))
-        .range([0, height / 2]);
+        .range([0, Math.min(width, height) / 2]);
 
     var theta = d3.scaleLinear()
         // .domain(d3.extent(testDay1, function(d) { return (d.dt); }))
-        .domain([0, 60 * 23 + 59])
+        .domain([0, 60 * 24])
         .range([0, Math.PI * 2]);
 
     function calcMins(d) {
         d = new Date(d.dt);
+        d = new Date(d.getTime() - d.getTimezoneOffset()); // Hacky locale adjustment TODO: fix either backend or frontend localization
         return (d.getHours() * 60 + d.getMinutes());
     }
 
-    console.log(calcMins(testDay1[0]));
-
-    console.log(theta(calcMins(testDay1[0])));
-
     var l = d3.radialLine()
-        .angle(function(d) { return (theta(calcMins(d.dt))); })
-        .radius(function(d) { return (r(d.vol_passed)); });
+        .angle(function(d) { return theta(calcMins(d)); })
+        .radius(function(d) { return r(d.vol_passed); });
 
     // TODO: get outer clock working
-    var arc = d3.arc()
-        .innerRadius(0)
-        .outerRadius(width) // scale with number of days, n x 7 arrangement after getting one working
-        .startAngle(0)
-        .endAngle(Math.PI / 2);
+    var rAxis =  svg.append("g")
+        .attr("class", "r axis")
+        .selectAll("g")
+        .data(r.ticks(2).slice(1))
+        .enter()
+        .append("g");
 
-    svg.append("g")
-        .attr("d", arc);
+    rAxis.append("circle")
+        .attr("r", r);
+
+    // rAxis.append("text")
+    //     .attr("y", function(d) { return -r(d); })
+    //     .style("text-anchor", "middle")
+    //     .text(function(d) { return d; });
+
+
+    var thetaAxis = svg.append("g")
+        .attr("class", "theta axis")
+        .selectAll("g")
+        .data(d3.range(0, 24, 1))
+        .enter()
+        .append("g")
+        .attr("transform", function(d) { return `rotate(${(d - 6) * 360 / 24})`; }); // d3 likes to start radial ticks at 3 o'clock
+
+    thetaAxis.append("line")
+        .attr("x2", radius)
+        .attr("x1", radius*0.8);
+
+    thetaAxis.append("text")
+        .attr("x", radius)
+        .attr("dy", ".35em")
+        .style("text-anchor", function(d) { return d < 24 && d > 12 ? "end" : null; })
+        .attr("transform", function(d) { return d < 24 && d > 12 ? `rotate(180 ${radius}, 0)` : null; })
+        .text(function(d) {return d; });
+
+    // var arc = d3.arc()
+    //     .innerRadius(0)
+    //     .outerRadius(width) // scale with number of days, n x 7 arrangement after getting one working
+    //     .startAngle(0)
+    //     .endAngle(Math.PI / 2);
+
+    // svg.append("g")
+    //     .attr("d", arc);
 
     // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
     svg.append("path")
-        .data([testDay1])
-        .attr("transform", `translate(${ width / 2 }, ${ height / 2 })`)
+        .attr("class", "line")
+        .data([calDay1])
         .attr("d", l);
+
+    // TODO: add area highlight over current time +/- 5 min
 }

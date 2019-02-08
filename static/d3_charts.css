@@ -1,0 +1,15 @@
+.axis line {
+    stroke: grey;
+    stroke-dasharray: 1, 4;
+}
+
+.line {
+    fill: none;
+    stroke: #7198d6;
+    stroke-width: 1.5px;
+}
+
+.axis {
+    fill: none;
+    stroke: orange;
+}
