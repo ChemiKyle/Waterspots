@@ -58,11 +58,21 @@ function radial_clockplot() {
         .range([0, height / 2]);
 
     var theta = d3.scaleLinear()
-        .domain(d3.extent(testDay1, function(d) { return (d.dt); }))
+        // .domain(d3.extent(testDay1, function(d) { return (d.dt); }))
+        .domain([0, 60 * 23 + 59])
         .range([0, Math.PI * 2]);
 
+    function calcMins(d) {
+        d = new Date(d.dt);
+        return (d.getHours() * 60 + d.getMinutes());
+    }
+
+    console.log(calcMins(testDay1[0]));
+
+    console.log(theta(calcMins(testDay1[0])));
+
     var l = d3.radialLine()
-        .angle(function(d) { return (theta(d.dt)); })
+        .angle(function(d) { return (theta(calcMins(d.dt))); })
         .radius(function(d) { return (r(d.vol_passed)); });
 
     // TODO: get outer clock working
