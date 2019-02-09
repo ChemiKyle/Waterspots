@@ -47,25 +47,19 @@ function draw_lineplot() {
         .attr("d", valueline);
 }
 
-function radial_clockplot() {
+function radial_clockplot(dayDf) {
     var [margin, width, height, svg] = setup_chart_area();
 
     svg = svg
         .attr("transform", `translate(${ width / 2 }, ${ height / 2 })`);
 
     var radius = Math.min(width, height) / 2 - Math.max.apply(null, Object.values(margin));
-    console.log(radius);
-
-    // TODO: split this by calendar day of df.dt
-    var testDay1 = df.slice(0, 960); // TODO: extract time and date separately
-    var calDay1 = df.slice(0, 783); // First calendar day if starting at 11am
 
     var r = d3.scaleLinear()
-        .domain(d3.extent(testDay1, function(d) { return (d.vol_passed); }))
-        .range([0, Math.min(width, height) / 2]);
+        .domain(d3.extent(dayDf, function(d) { return (d.vol_passed); }))
+        .range([0, radius]);
 
     var theta = d3.scaleLinear()
-        // .domain(d3.extent(testDay1, function(d) { return (d.dt); }))
         .domain([0, 60 * 24])
         .range([0, Math.PI * 2]);
 
@@ -81,14 +75,15 @@ function radial_clockplot() {
 
     // TODO: get outer clock working
     var rAxis =  svg.append("g")
-        .attr("class", "r axis")
-        .selectAll("g")
-        .data(r.ticks(2).slice(1))
-        .enter()
-        .append("g");
+        .attr("class", "r axis");
+        // .selectAll("g")
+        // .data(r.ticks(2).slice(1))
+        // .enter()
+        // .append("g");
 
-    rAxis.append("circle")
-        .attr("r", r);
+    rAxis.append("g")
+        .append("circle")
+        .attr("r", radius);
 
     // rAxis.append("text")
     //     .attr("y", function(d) { return -r(d); })
@@ -127,8 +122,20 @@ function radial_clockplot() {
     // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
     svg.append("path")
         .attr("class", "line")
-        .data([calDay1])
+        .data([dayDf])
         .attr("d", l);
 
     // TODO: add area highlight over current time +/- 5 min
+}
+
+function multi_clockplots() {
+    const calDays = Math.ceil((df.slice(-1)[0].dt - df[0].dt)
+                              / (24*3600*1000));
+    console.log(calDays);
+
+    // TODO: split this by calendar day of df.dt
+    var testDay1 = df.slice(0, 960); // TODO: extract time and date separately
+    var calDay1 = df.slice(0, 783); // First calendar day if starting at 11am
+
+    radial_clockplot(calDay1);
 }
