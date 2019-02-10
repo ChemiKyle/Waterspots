@@ -119,11 +119,29 @@ function radial_clockplot(dayDf) {
     // svg.append("g")
     //     .attr("d", arc);
 
+    var samplingHighlight = d3.areaRadial()
+        .startAngle(function(d) { return theta(calcMins(d) - 5); })
+        .endAngle(function(d) { return theta(calcMins(d) + 5); })
+        .innerRadius(radius / 2)
+        .outerRadius(radius);
+
+    // TODO: a separate path for each object in the data
+    svg.append("g")
+        .attr("class", "samplings")
+        .selectAll("g")
+        .data([dayDf.filter((d) => { return d.sampling_point; })])
+        .enter()
+        .selectAll("path")
+        // .data(function(d) { return d; })
+        // .enter()
+        .append("path")
+        .attr("d", samplingHighlight);
+
     // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
-    svg.append("path")
-        .attr("class", "line")
-        .data([dayDf])
-        .attr("d", l);
+    // svg.append("path")
+    //     .attr("class", "line")
+    //     .data([dayDf])
+    //     .attr("d", l);
 
     // TODO: add area highlight over current time +/- 5 min
 }
