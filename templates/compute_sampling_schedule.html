@@ -56,8 +56,9 @@
 
     <br/>
 
-    <div id="sampling_table">
+    <div id="sampling-table">
         {{ sampling_table | safe }}
+        <button onclick="multi_clockplots()">Plot</button>
     </div>
 
     <br/>
@@ -73,5 +74,19 @@
      var hiddens = document.getElementsByClassName("hidden");
      for (var i = 0; i < hiddens.length; i++) { hiddens[i].style.display='none'; }
      document.getElementById(system_type).style.display='block';
+ }
+
+ // Alternate color of test day rows
+ var rows = document.getElementById('sampling-table')
+                    .getElementsByTagName('tbody')[0]
+                    .getElementsByTagName('tr');
+
+ for ( row of rows) {
+     if(parseInt(row.cells[2].innerHTML, 10) % 2 != 0){
+         row.style.backgroundColor='var(--color-secondary-2-1)';
+     } else {
+         row.style.backgroundColor='var(--color-secondary-2-3)';
+         row.style.color='white';
+     }
  }
 </script>

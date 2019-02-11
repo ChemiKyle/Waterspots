@@ -65,7 +65,7 @@ function radial_clockplot(dayDf) {
 
     function calcMins(d) {
         d = new Date(d.dt);
-        d = new Date(d.getTime() - d.getTimezoneOffset()); // Hacky locale adjustment TODO: fix either backend or frontend localization
+        d = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000); // Hacky locale adjustment TODO: fix either backend or frontend localization
         return (d.getHours() * 60 + d.getMinutes());
     }
 
@@ -73,23 +73,12 @@ function radial_clockplot(dayDf) {
         .angle(function(d) { return theta(calcMins(d)); })
         .radius(function(d) { return r(d.vol_passed); });
 
-    // TODO: get outer clock working
     var rAxis =  svg.append("g")
         .attr("class", "r axis");
-        // .selectAll("g")
-        // .data(r.ticks(2).slice(1))
-        // .enter()
-        // .append("g");
 
     rAxis.append("g")
         .append("circle")
         .attr("r", radius);
-
-    // rAxis.append("text")
-    //     .attr("y", function(d) { return -r(d); })
-    //     .style("text-anchor", "middle")
-    //     .text(function(d) { return d; });
-
 
     var thetaAxis = svg.append("g")
         .attr("class", "theta axis")
@@ -101,7 +90,7 @@ function radial_clockplot(dayDf) {
 
     thetaAxis.append("line")
         .attr("x2", radius)
-        .attr("x1", radius*0.8);
+        .attr("x1", radius*0.75);
 
     thetaAxis.append("text")
         .attr("x", radius)
@@ -110,16 +99,7 @@ function radial_clockplot(dayDf) {
         .attr("transform", function(d) { return d < 24 && d > 12 ? `rotate(180 ${radius}, 0)` : null; })
         .text(function(d) {return d; });
 
-    // var arc = d3.arc()
-    //     .innerRadius(0)
-    //     .outerRadius(width) // scale with number of days, n x 7 arrangement after getting one working
-    //     .startAngle(0)
-    //     .endAngle(Math.PI / 2);
-
-    // svg.append("g")
-    //     .attr("d", arc);
-
-    var samplingHighlight = d3.areaRadial()
+    var samplingHighlight = d3.arc()
         .startAngle(function(d) { return theta(calcMins(d) - 5); })
         .endAngle(function(d) { return theta(calcMins(d) + 5); })
         .innerRadius(radius / 2)
@@ -127,33 +107,64 @@ function radial_clockplot(dayDf) {
 
     // TODO: a separate path for each object in the data
     svg.append("g")
-        .attr("class", "samplings")
-        .selectAll("g")
-        .data([dayDf.filter((d) => { return d.sampling_point; })])
-        .enter()
+        .attr("class", "sampling_highlight")
         .selectAll("path")
-        // .data(function(d) { return d; })
-        // .enter()
+        .data(dayDf.filter((d) => d.sampling_point ))
+        .enter()
         .append("path")
         .attr("d", samplingHighlight);
 
-    // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
-    // svg.append("path")
-    //     .attr("class", "line")
-    //     .data([dayDf])
-    //     .attr("d", l);
+    svg.append("g")
+        .attr("class", "sampling-pct")
+        .selectAll("g")
+        .data(dayDf.filter((d) => d.sampling_point ))
+        .enter()
+        .append("g")
+        .attr("transform", function(d) { return `rotate(${ ((calcMins(d) / 24) - 6) * 360 / 24})`; })
+        .append("text")
+        .attr("x", radius / 2)
+        .attr("dy", ".35em")
+        .attr("transform", function(d) { return (calcMins(d) / 24) < 24 && (calcMins(d) / 24) > 12 ? `rotate(180 ${radius}, 0)` : null; })
+        .text(function(d) {return d.pct_capacity; });
 
-    // TODO: add area highlight over current time +/- 5 min
+    // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
+    svg.append("path")
+        .attr("class", "line")
+        .data([dayDf])
+        .attr("d", l);
+
+    const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const calDate = new Date(dayDf[0].dt);
+    svg.append("text")
+        .attr("class", "title")
+        .attr("x", 0)
+        .attr("y", - radius - margin.top)
+        .attr("text-anchor", "middle")
+        .text(`${weekday[calDate.getDay()]}, ${calDate.toLocaleDateString()}`);
 }
 
 function multi_clockplots() {
     const calDays = Math.ceil((df.slice(-1)[0].dt - df[0].dt)
                               / (24*3600*1000));
-    console.log(calDays);
 
     // TODO: split this by calendar day of df.dt
     var testDay1 = df.slice(0, 960); // TODO: extract time and date separately
     var calDay1 = df.slice(0, 783); // First calendar day if starting at 11am
 
-    radial_clockplot(calDay1);
+    // radial_clockplot(calDay1);
+
+    var day = df[0].dt;
+
+    // TODO: pop from array if date less than threshhold?
+    for (var i=0; i<calDays; i++) {
+        var nextDay = day + 1000 * 60 * 60 * 24 - 1;
+        console.log(day);
+        var dayDf_ = df.filter(d => d.dt >= day && d.dt < nextDay);
+        console.log(dayDf_[0]);
+        // day.setDate(day.getDate() + 1);
+        day += 1000 * 60 * 60 * 24;
+        radial_clockplot(dayDf_);
+    }
+
+    // TODO: highlight realtime date and time
 }
