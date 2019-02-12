@@ -51,12 +51,13 @@ function radial_clockplot(dayDf) {
     var [margin, width, height, svg] = setup_chart_area();
 
     svg = svg
+        .attr("id", new Date(dayDf[0].dt).toLocaleDateString())
         .attr("transform", `translate(${ width / 2 }, ${ height / 2 })`);
 
     var radius = Math.min(width, height) / 2 - Math.max.apply(null, Object.values(margin));
 
     var r = d3.scaleLinear()
-        .domain(d3.extent(dayDf, function(d) { return (d.vol_passed); }))
+        .domain(d3.extent(df, function(d) { return (d.vol_passed); }))
         .range([0, radius]);
 
     var theta = d3.scaleLinear()
@@ -86,7 +87,7 @@ function radial_clockplot(dayDf) {
         .data(d3.range(0, 24, 1))
         .enter()
         .append("g")
-        .attr("transform", function(d) { return `rotate(${(d - 6) * 360 / 24})`; }); // d3 likes to start radial ticks at 3 o'clock
+        .attr("transform", function(d) { return `rotate(${(d - 6) * 360 / 24})`; }); // d3 likes to start radial ticks at the 3 o'clock
 
     thetaAxis.append("line")
         .attr("x2", radius)
@@ -102,7 +103,7 @@ function radial_clockplot(dayDf) {
     var samplingHighlight = d3.arc()
         .startAngle(function(d) { return theta(calcMins(d) - 5); })
         .endAngle(function(d) { return theta(calcMins(d) + 5); })
-        .innerRadius(radius / 2)
+        .innerRadius(function(d) { return radius - radius * (d.pct_capacity / df.slice(-1)[0].pct_capacity); })
         .outerRadius(radius);
 
     // TODO: a separate path for each object in the data
@@ -120,12 +121,12 @@ function radial_clockplot(dayDf) {
         .data(dayDf.filter((d) => d.sampling_point ))
         .enter()
         .append("g")
-        .attr("transform", function(d) { return `rotate(${ ((calcMins(d) / 24) - 6) * 360 / 24})`; })
+        .attr("transform", function(d) { return `rotate(${(calcMins(d) / 60 - 6) * 360 / 24})`; })
         .append("text")
-        .attr("x", radius / 2)
+        .attr("x", radius - margin.top * 3/2)
         .attr("dy", ".35em")
-        .attr("transform", function(d) { return (calcMins(d) / 24) < 24 && (calcMins(d) / 24) > 12 ? `rotate(180 ${radius}, 0)` : null; })
-        .text(function(d) {return d.pct_capacity; });
+        .attr("transform", function(d) { return (calcMins(d) / 60) < 24 && (calcMins(d) / 60) > 12 ? `rotate(180 ${radius - margin.top * 3/2}, 0)` : null; })
+        .text(function(d) {return `${Math.round(d.pct_capacity)}%`; });
 
     // TODO: loop this over all calendar days the testing is performed, drawing a new clock every day
     svg.append("path")
@@ -141,9 +142,11 @@ function radial_clockplot(dayDf) {
         .attr("y", - radius - margin.top)
         .attr("text-anchor", "middle")
         .text(`${weekday[calDate.getDay()]}, ${calDate.toLocaleDateString()}`);
+
 }
 
 function multi_clockplots() {
+    document.getElementById("chart").innerHTML = "";
     const calDays = Math.ceil((df.slice(-1)[0].dt - df[0].dt)
                               / (24*3600*1000));
 
@@ -158,13 +161,61 @@ function multi_clockplots() {
     // TODO: pop from array if date less than threshhold?
     for (var i=0; i<calDays; i++) {
         var nextDay = day + 1000 * 60 * 60 * 24 - 1;
-        console.log(day);
         var dayDf_ = df.filter(d => d.dt >= day && d.dt < nextDay);
-        console.log(dayDf_[0]);
         // day.setDate(day.getDate() + 1);
         day += 1000 * 60 * 60 * 24;
         radial_clockplot(dayDf_);
     }
 
+
     // TODO: highlight realtime date and time
+    drawRealtime();
+}
+
+
+function drawRealtime() {
+
+    const margin = {top: 30, right: 20, bottom: 30, left: 50},
+          width = window.innerWidth - margin.left - margin.right,
+          height = window.innerHeight - margin.top - margin.bottom;
+    const radius = Math.min(width, height) / 2 - Math.max.apply(null, Object.values(margin));
+
+    var theta = d3.scaleLinear()
+        .domain([0, 60 * 24])
+        .range([0, Math.PI * 2]);
+
+    function calcMins(d) {
+        d = new Date(d.dt);
+        d = new Date(d.getTime()); 
+        return (d.getHours() * 60 + d.getMinutes());
+    }
+
+    var timeHighlight = d3.arc()
+        .startAngle(function(d) { return theta(calcMins(d) - 2.5); })
+        .endAngle(function(d) { return theta(calcMins(d) + 2.5); })
+        .innerRadius(0)
+        .outerRadius(radius);
+
+    const today = new Date();
+
+    var ct = d3.select(`[id="${today.toLocaleDateString()}"]`)
+        .append("g")
+        .attr("id", "current-time");
+
+    function ff() {
+    var curTime = document.getElementById("current-time");
+    if (curTime != null) {
+        while (curTime.firstChild) {
+            curTime.removeChild(curTime.firstChild);
+        }
+    }
+
+
+    // var d = d3.select("#current-time");
+
+        ct.append("path").attr("id", "timeline")
+        .attr("d", timeHighlight({'dt': new Date()}));
+    }
+    ff();
+    setInterval(ff, 1000 * 60);
 }

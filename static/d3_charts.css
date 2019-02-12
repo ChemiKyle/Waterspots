@@ -40,7 +40,7 @@
 
 .axis line {
     stroke: var(--color-primary-1);
-    stroke-dasharray: 1, 12, 4;
+    stroke-dasharray: 4, 8, 6;
 }
 
 .line {
@@ -59,4 +59,14 @@
     fill: var(--color-secondary-2-3);
 }
 
+.sampling-pct {
+    color: var(--color-complement-0);
+}
+
 text.title{ stroke: var(--color-secondary-1-0);}
+
+#current-time {
+    stroke: var(--color-complement-0);
+    fill: var(--color-complement-1);
+    opacity:0.75;
+}
